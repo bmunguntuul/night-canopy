@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Night Canopy — Photo</title>
+<meta name="description" content="A night photograph of a futuristic canopy plaza lit in teal." />
+<style>
+  :root {
+    --bg: #05080c;
+    --bg-soft: #0b1118;
+    --ink: #e8f1f5;
+    --muted: #8aa1ad;
+    --accent: #6fe3d2;
+    --line: rgba(232, 241, 245, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(1200px 600px at 70% -10%, rgba(111, 227, 210, 0.10), transparent 60%),
+      radial-gradient(900px 500px at 10% 110%, rgba(90, 120, 200, 0.10), transparent 60%),
+      var(--bg);
+    color: var(--ink);
+    font-family: "Helvetica Neue", "Segoe UI", system-ui, -apple-system, "Noto Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    padding: 32px clamp(20px, 5vw, 72px) 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .meta {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  main {
+    flex: 1;
+    padding: clamp(20px, 4vw, 48px) clamp(20px, 5vw, 72px) 0;
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  .frame {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--bg-soft);
+    overflow: hidden;
+    cursor: zoom-in;
+    box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.9);
+  }
+
+  .frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 78vh;
+    object-fit: contain;
+    transition: transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .frame:hover img { transform: scale(1.015); }
+
+  .frame::after {
+    content: "Click to enlarge";
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: rgba(5, 8, 12, 0.6);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 250ms ease;
+  }
+
+  .frame:hover::after { opacity: 1; }
+
+  figcaption {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 28px;
+    flex-wrap: wrap;
+    padding: 22px 2px 0;
+  }
+
+  .title {
+    font-size: clamp(20px, 2.6vw, 30px);
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .desc {
+    margin: 0;
+    max-width: 62ch;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+    padding-top: 4px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 11px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: background 200ms ease, border-color 200ms ease, color 200ms ease;
+  }
+
+  .btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #03211d;
+  }
+
+  footer {
+    padding: 40px clamp(20px, 5vw, 72px);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--line);
+    margin-top: clamp(32px, 5vw, 64px);
+  }
+
+  /* Lightbox */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(3, 5, 8, 0.94);
+    padding: clamp(16px, 4vw, 56px);
+    cursor: zoom-out;
+  }
+
+  .lightbox.open { display: flex; }
+
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+    box-shadow: 0 40px 120px -30px #000;
+  }
+
+  .lightbox .close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: rgba(5, 8, 12, 0.6);
+    color: var(--ink);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  @media (max-width: 560px) {
+    .frame::after { display: none; }
+    .frame img { max-height: 58vh; }
+    .actions { width: 100%; }
+    .btn { flex: 1; text-align: center; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <span class="brand">Photo Journal</span>
+    <span class="meta">Night · 5712 × 4284</span>
+  </header>
+
+  <main>
+    <figure>
+      <button class="frame" id="open" aria-label="Enlarge photo">
+        <img
+          src="images/photo.jpg"
+          alt="A futuristic plaza at night with huge tree-like canopies lit in teal and blue, surrounded by towers and strolling people."
+          width="2400"
+          height="1800"
+          fetchpriority="high"
+        />
+      </button>
+      <figcaption>
+        <div>
+          <h1 class="title">Night Canopy</h1>
+          <p class="desc">
+            A steel-and-glass canopy unfolding like petals over a plaza, washed in teal light.
+            Towers glow behind it, and the warm flower screen keeps the ground alive.
+          </p>
+        </div>
+        <div class="actions">
+          <a class="btn" href="images/photo.jpg" download="night-canopy.jpg">Download</a>
+        </div>
+      </figcaption>
+    </figure>
+  </main>
+
+  <footer>
+    <span>IMG_8251</span>
+    <span>Static page · no build step</span>
+  </footer>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Full size photo">
+    <button class="close" id="close" aria-label="Close">&times;</button>
+    <img src="images/photo.jpg" alt="Full size view of the night canopy plaza." />
+  </div>
+
+  <script>
+    // Open the lightbox when the main frame is activated.
+    const lightbox = document.getElementById("lightbox");
+    const openBtn = document.getElementById("open");
+    const closeBtn = document.getElementById("close");
+
+    function openLightbox() {
+      lightbox.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    // Close the lightbox and restore page scrolling.
+    function closeLightbox() {
+      lightbox.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    openBtn.addEventListener("click", openLightbox);
+    closeBtn.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", function (event) {
+      if (event.target === lightbox) closeLightbox();
+    });
+
+    // Esc closes the overlay.
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") closeLightbox();
+    });
+  </script>
+</body>
+</html>
